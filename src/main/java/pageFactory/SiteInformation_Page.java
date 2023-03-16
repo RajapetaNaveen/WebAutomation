@@ -282,6 +282,7 @@ public class SiteInformation_Page  extends BasePage {
 		}
 		Helper.clickonElement(nxtbtn);
 		for(int i=1;i<=j;i++) {
+			Thread.sleep(1000);
 			String siteprogram=check.get(0).getText();
 			if(programsdisplayedinsiteinfo.contains(siteprogram)) {
 				if(siteprogram.equalsIgnoreCase("Ambulatory Health Care")) {
