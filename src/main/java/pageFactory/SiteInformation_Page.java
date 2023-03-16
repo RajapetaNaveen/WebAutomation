@@ -266,9 +266,11 @@ public class SiteInformation_Page  extends BasePage {
 
 	@Step("Site details verified succesfully")
 	public void sitedetails() throws Exception {
+		Thread.sleep(3000);
 		List<WebElement> rowsbeforedel=driver.findElements(By.xpath("/html/body/form/div[3]/div[5]/div[2]/div[1]/div[11]/div/div[2]/div[2]/div/table/tbody/tr"));
 		int j=rowsbeforedel.size();
 		for(int i=0;i<j;i++) {
+			Thread.sleep(2000);
 			List<WebElement> programnames=driver.findElements(By.xpath("//*[@id='ctl00_ctl00_cphBodyContent_cphEappBodyContent_rgSites_ctl00__"+i+"']/td[5]"));
 			if(driver.findElement(By.xpath("//*[@id='ctl00_ctl00_cphBodyContent_cphEappBodyContent_rgSites_ctl00__"+i+"']/td[5]")).getText().equalsIgnoreCase(" ")) {
 				driver.findElement(By.xpath("//*[@id='ctl00_ctl00_cphBodyContent_cphEappBodyContent_rgSites_ctl00__"+i+"']/td[7]")).click();
