@@ -14,8 +14,10 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
@@ -34,7 +36,7 @@ public class BaseTest {
 	public Properties prop;
 	public String browser;
 	ExcelUtil excel = new ExcelUtil();
-	public  WebDriver driver;
+	public  WebDriver driver = null;
 	public BasePage Pages;
 	
 
@@ -68,6 +70,7 @@ public class BaseTest {
 	
 	@BeforeMethod
 	public void LaunchApp(ITestResult result) {
+		System.out.println("Before Method" + result.getMethod().getMethodName());
 		if(!result.getMethod().getMethodName().contains("FourthtTestCase"))
 		{
 		getDriver().get(prop.getProperty("AUTurl"));
@@ -76,13 +79,15 @@ public class BaseTest {
 	
 	public WebDriver getDriver()
 	{
-		if(driver==null)
+		if(hasQuit(driver))
 		{
 			browser = prop.get("browser").toString();
 			switch (browser) {
 			case "chrome":
 				WebDriverManager.chromedriver().setup();
-				driver = new ChromeDriver();
+				ChromeOptions options = new ChromeOptions();
+				options.addArguments("--remote-allow-origins=*");
+				driver = new ChromeDriver(options);
 				break;
 			case "firefox":
 				WebDriverManager.firefoxdriver().setup();
@@ -115,28 +120,35 @@ public class BaseTest {
 		return System.getenv("user.dir")+"//reports"+testcaseName+".png";
 	}
 	
+	public static boolean hasQuit(WebDriver driver) {
+		try {
+	    return ((RemoteWebDriver)driver).getSessionId() == null;
+		}
+		catch (Exception e)
+		{
+			return true;
+		}
+	}
+	
 	@AfterMethod
 	public void TearDown(ITestResult result)
 	{
-		if(driver!=null)
+		System.out.println("After Method" + result.getMethod().getMethodName());
+		if(!hasQuit(driver))
 		{
-			if(result.isSuccess())
-			{
-				driver.quit();
-				driver = null;
-			}
-		
+		driver.quit();
+		driver = null;
 		}
 	}
-
 	@AfterTest
 	public void quit()
 	{
-		if(driver!=null)
+		System.out.println("After Test ");
+		if(!hasQuit(driver))
 		{
 			driver.quit();
 			driver = null;
-		}
 		
+		}
 	}
 }
